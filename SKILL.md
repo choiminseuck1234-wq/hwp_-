@@ -3,10 +3,66 @@ name: hwpx
 description: "한글(HWPX) 문서 생성/읽기/편집 스킬. .hwpx 파일, 한글 문서, Hancom, OWPML 관련 요청 시 사용."
 ---
 
-# HWPX 문서 스킬 — XML-first 워크플로우
+# HWPX 문서 스킬 — 레퍼런스 복원 우선(XML-first) 워크플로우
 
 한글(Hancom Office)의 HWPX 파일을 **XML 직접 작성** 중심으로 생성, 편집, 읽기할 수 있는 스킬.
 HWPX는 ZIP 기반 XML 컨테이너(OWPML 표준)이다. python-hwpx API의 서식 버그를 완전히 우회하며, 세밀한 서식 제어가 가능하다.
+
+## 기본 동작 모드 (필수): 첨부 HWPX 분석 → 고유 XML 복원(99% 근접) → 요청 반영 재작성
+
+사용자가 `.hwpx`를 첨부한 경우, 이 스킬은 아래 순서를 **기본값**으로 따른다.
+
+1. **레퍼런스 확보**: 첨부된 HWPX를 기준 문서로 사용
+2. **심층 분석/추출**: `analyze_template.py`로 `header.xml`, `section0.xml` 추출
+3. **구조 복원**: header 스타일 ID/표 구조/셀 병합/여백/문단 흐름을 최대한 동일하게 유지
+4. **요청 반영 재작성**: 사용자가 요구한 텍스트/데이터만 교체하고 구조는 보존
+5. **빌드/검증**: `build_hwpx.py` + `validate.py`로 결과 산출 및 무결성 확인
+6. **쪽수 가드(필수)**: `page_guard.py`로 레퍼런스 대비 페이지 드리프트 위험 검사
+
+### 99% 근접 복원 기준 (실무 체크리스트)
+
+- `charPrIDRef`, `paraPrIDRef`, `borderFillIDRef` 참조 체계 동일
+- 표의 `rowCnt`, `colCnt`, `colSpan`, `rowSpan`, `cellSz`, `cellMargin` 동일
+- 문단 순서, 문단 수, 주요 빈 줄/구획 위치 동일
+- 페이지/여백/섹션(secPr) 동일
+- 변경은 사용자 요청 범위(본문 텍스트, 값, 항목명 등)로 제한
+
+### 쪽수 동일(100%) 필수 기준
+
+- 사용자가 레퍼런스를 제공한 경우 **결과 문서의 최종 쪽수는 레퍼런스와 동일해야 한다**
+- 쪽수가 늘어날 가능성이 보이면 먼저 텍스트를 압축/요약해서 기존 레이아웃에 맞춘다
+- 사용자 명시 요청 없이 `hp:p`, `hp:tbl`, `rowCnt`, `colCnt`, `pageBreak`, `secPr`를 변경하지 않는다
+- `validate.py` 통과만으로 완료 처리하지 않는다. 반드시 `page_guard.py`도 통과해야 한다
+- `page_guard.py` 실패 시 결과를 완료로 제출하지 않고, 원인(길이 과다/구조 변경)을 수정 후 재빌드한다
+- 가능하면 한글(또는 사용자의 확인) 기준 최종 쪽수 값을 확인하고 레퍼런스와 일치 여부를 재확인한다
+
+### 기본 실행 명령 (첨부 레퍼런스가 있을 때)
+
+```bash
+source "$VENV"
+
+# 1) 레퍼런스 분석 + XML 추출
+python3 "$SKILL_DIR/scripts/analyze_template.py" reference.hwpx \
+  --extract-header /tmp/ref_header.xml \
+  --extract-section /tmp/ref_section.xml
+
+# 2) /tmp/ref_section.xml을 복제해 /tmp/new_section0.xml 작성
+#    (구조 유지, 텍스트/데이터만 요청에 맞게 수정)
+
+# 3) 복원 빌드
+python3 "$SKILL_DIR/scripts/build_hwpx.py" \
+  --header /tmp/ref_header.xml \
+  --section /tmp/new_section0.xml \
+  --output result.hwpx
+
+# 4) 검증
+python3 "$SKILL_DIR/scripts/validate.py" result.hwpx
+
+# 5) 쪽수 드리프트 가드 (필수)
+python3 "$SKILL_DIR/scripts/page_guard.py" \
+  --reference reference.hwpx \
+  --output result.hwpx
+```
 
 ## 환경
 
@@ -37,6 +93,7 @@ source "$VENV"
 │   ├── build_hwpx.py                     # 템플릿 + XML → .hwpx 조립 (핵심)
 │   ├── analyze_template.py               # HWPX 심층 분석 (레퍼런스 기반 생성용)
 │   ├── validate.py                       # HWPX 구조 검증
+│   ├── page_guard.py                     # 레퍼런스 대비 페이지 드리프트 위험 검사
 │   └── text_extract.py                   # 텍스트 추출
 ├── templates/
 │   ├── base/                             # 베이스 템플릿 (Skeleton 기반)
@@ -46,21 +103,13 @@ source "$VENV"
 │   ├── report/                           # 보고서 오버레이
 │   ├── minutes/                          # 회의록 오버레이
 │   └── proposal/                         # 제안서/사업개요 오버레이 (색상 헤더바, 번호 배지)
-├── examples/
-│   ├── 01_basic_document.sh              # XML로 기본 문서 빌드
-│   ├── 02_gonmun_example.sh              # 공문 템플릿 사용
-│   ├── 03_report_with_table.sh           # 표 포함 보고서
-│   ├── 04_read_and_extract.py            # 기존 문서 읽기/추출
-│   ├── 05_edit_existing.sh               # unpack→편집→pack
-│   ├── sample_section0.xml               # 주석 달린 section0 예제
-│   └── sample_header.xml                 # 주석 달린 header 예제
 └── references/
     └── hwpx-format.md                    # OWPML XML 요소 레퍼런스
 ```
 
 ---
 
-## 워크플로우 1: XML-first 문서 생성 (주 워크플로우)
+## 워크플로우 1: XML-first 문서 생성 (보조 워크플로우, 레퍼런스 파일이 없을 때만)
 
 ### 흐름
 
@@ -69,6 +118,8 @@ source "$VENV"
 3. **(선택) header.xml 수정** (새 스타일 추가 필요 시)
 4. **build_hwpx.py로 빌드**
 5. **validate.py로 검증**
+
+> 원칙: 사용자가 레퍼런스 HWPX를 제공한 경우에는 이 워크플로우 대신 상단의 "기본 동작 모드(레퍼런스 복원 우선)"를 사용한다.
 
 ### 기본 사용법
 
@@ -422,9 +473,10 @@ python3 "$SKILL_DIR/scripts/validate.py" document.hwpx
 
 ---
 
-## 워크플로우 5: 레퍼런스 기반 문서 생성
+## 워크플로우 5: 레퍼런스 기반 문서 생성 (첨부 HWPX가 있을 때 기본 적용)
 
 사용자가 제공한 HWPX 파일을 분석하여 동일한 레이아웃의 문서를 생성하는 워크플로우.
+이 스킬에서는 첨부 레퍼런스가 존재하면 본 워크플로우를 기본으로 사용한다.
 
 ### 흐름
 
@@ -432,7 +484,8 @@ python3 "$SKILL_DIR/scripts/validate.py" document.hwpx
 2. **header.xml 추출** — 레퍼런스의 스타일 정의를 그대로 사용
 3. **section0.xml 작성** — 분석 결과의 구조를 따라 새 내용으로 작성
 4. **빌드** — 추출한 header.xml + 새 section0.xml로 빌드
-5. **검증**
+5. **검증** — `validate.py`
+6. **쪽수 가드** — `page_guard.py` (실패 시 재수정)
 
 ### 사용법
 
@@ -460,6 +513,11 @@ python3 "$SKILL_DIR/scripts/build_hwpx.py" \
 
 # 5. 검증
 python3 "$SKILL_DIR/scripts/validate.py" result.hwpx
+
+# 6. 쪽수 드리프트 가드 (필수)
+python3 "$SKILL_DIR/scripts/page_guard.py" \
+  --reference reference.hwpx \
+  --output result.hwpx
 ```
 
 ### 분석 출력 항목
@@ -480,6 +538,8 @@ python3 "$SKILL_DIR/scripts/validate.py" result.hwpx
 - **열 너비 합계 = 본문폭**: 분석 결과의 열너비 배열을 그대로 복제
 - **rowSpan/colSpan 패턴 유지**: 분석된 셀 병합 구조를 정확히 재현
 - **cellMargin 보존**: 분석된 셀 여백 값을 동일하게 적용
+- **페이지 증가 금지**: 사용자 명시 승인 없이 결과 쪽수를 늘리지 말 것
+- **치환 우선 편집**: 새 문단/표 추가보다 기존 텍스트 노드 치환을 우선할 것
 
 ---
 
@@ -492,6 +552,7 @@ python3 "$SKILL_DIR/scripts/validate.py" result.hwpx
 | `scripts/office/unpack.py` | HWPX → 디렉토리 (XML pretty-print) |
 | `scripts/office/pack.py` | 디렉토리 → HWPX (mimetype first) |
 | `scripts/validate.py` | HWPX 파일 구조 검증 |
+| `scripts/page_guard.py` | 레퍼런스 대비 페이지 드리프트 위험 검사 (필수 게이트) |
 | `scripts/text_extract.py` | HWPX 텍스트 추출 |
 
 ## 단위 변환
@@ -520,3 +581,9 @@ python3 "$SKILL_DIR/scripts/validate.py" result.hwpx
 9. **레퍼런스**: 상세 XML 구조는 `$SKILL_DIR/references/hwpx-format.md` 참조
 10. **build_hwpx.py 우선**: 새 문서 생성은 build_hwpx.py 사용 (python-hwpx API 직접 호출 지양)
 11. **빈 줄**: `<hp:t/>` 사용 (self-closing tag)
+12. **레퍼런스 우선 강제**: 사용자가 HWPX를 첨부하면 반드시 `analyze_template.py` + 추출 XML 기반으로 복원/재작성할 것
+13. **examples 폴더 미사용**: 작업 중 `.claude/skills/hwpx/examples/*` 파일은 읽기/참조/복사에 사용하지 말 것
+14. **쪽수 동일 필수**: 레퍼런스 기반 작업에서는 최종 결과의 쪽수를 레퍼런스와 동일하게 유지할 것
+15. **무단 페이지 증가 금지**: 사용자 명시 요청/승인 없이 쪽수 증가를 유발하는 구조 변경 금지
+16. **구조 변경 제한**: 사용자 요청이 없는 한 문단/표의 추가·삭제·분할·병합 금지 (치환 중심 편집)
+17. **page_guard 필수 통과**: `validate.py`와 별개로 `page_guard.py`를 반드시 통과해야 완료 처리
