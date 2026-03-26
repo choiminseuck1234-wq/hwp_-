@@ -517,7 +517,39 @@ python3 "$SKILL_DIR/scripts/validate.py" document.hwpx
 
 ---
 
-## 워크플로우 5: 레퍼런스 기반 문서 생성 (첨부 HWPX가 있을 때 기본 적용)
+## 워크플로우 5: 문서 병합 (merge)
+
+여러 HWPX 파일을 하나로 합치는 워크플로우. 스타일 ID 충돌을 자동으로 해결한다.
+
+### 처리 항목
+- **스타일 ID 리매핑**: charPr, paraPr, borderFill, style, tabPr ID를 자동으로 재할당하여 충돌 방지
+- **BinData 이미지 병합**: 동일 이미지는 중복 제거, 다른 이미지는 이름 변경 후 병합
+- **요소 ID 유니크화**: 문단/표/그림 등의 id, instid를 파일별 오프셋으로 분리
+- **폰트 병합**: 각 파일의 폰트를 통합 (중복 폰트는 자동 제거)
+- **페이지 나눔**: 기본적으로 문서 사이에 페이지 구분선 삽입 (--no-page-break로 비활성화)
+
+### 사용법
+
+```bash
+source "$VENV"
+# 2개 파일 병합
+python3 "$SKILL_DIR/scripts/merge_hwpx.py" file1.hwpx file2.hwpx -o merged.hwpx
+
+# 3개 이상 병합
+python3 "$SKILL_DIR/scripts/merge_hwpx.py" file1.hwpx file2.hwpx file3.hwpx -o merged.hwpx
+
+# 페이지 나눔 없이 병합
+python3 "$SKILL_DIR/scripts/merge_hwpx.py" file1.hwpx file2.hwpx -o merged.hwpx --no-page-break
+```
+
+### 주의사항
+- 첫 번째 파일이 기준(base) 문서가 됨 — 페이지 설정(여백, 용지 크기)은 첫 번째 파일 기준
+- 파일 순서가 병합 결과의 페이지 순서와 동일
+- 각 파일의 secPr(페이지 설정)은 첫 번째 파일만 유지됨
+
+---
+
+## 워크플로우 6: 레퍼런스 기반 문서 생성 (첨부 HWPX가 있을 때 기본 적용)
 
 사용자가 제공한 HWPX 파일을 분석하여 동일한 레이아웃의 문서를 생성하는 워크플로우.
 이 스킬에서는 첨부 레퍼런스가 존재하면 본 워크플로우를 기본으로 사용한다.
