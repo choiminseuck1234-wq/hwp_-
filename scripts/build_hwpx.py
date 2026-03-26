@@ -157,7 +157,7 @@ def validate_hwpx(hwpx_path: Path) -> list[str]:
 def _register_bindata(work: Path, bindata_dir: Path) -> None:
     """Register BinData images in content.hpf and META-INF/manifest.xml."""
     mime_map = {
-        ".jpg": "image/jpeg", ".jpeg": "image/jpeg",
+        ".jpg": "image/jpg", ".jpeg": "image/jpg",
         ".png": "image/png", ".gif": "image/gif", ".bmp": "image/bmp",
     }
     images = [
@@ -185,30 +185,12 @@ def _register_bindata(work: Path, bindata_dir: Path) -> None:
                 el.set("id", item_id)
                 el.set("href", href)
                 el.set("media-type", media_type)
+                el.set("isEmbeded", "1")
     etree.indent(root, space="  ")
     tree.write(str(hpf_path), pretty_print=True, xml_declaration=True, encoding="UTF-8")
 
-    # Update META-INF/manifest.xml — add <file-entry> entries
-    manifest_xml = work / "META-INF" / "manifest.xml"
-    if manifest_xml.is_file():
-        mtree = etree.parse(str(manifest_xml))
-        mroot = mtree.getroot()
-        mns = mroot.nsmap.get(None, "")
-        for img in images:
-            media_type = mime_map[img.suffix.lower()]
-            full_path = f"BinData/{img.name}"
-            # Check if already exists
-            exists = False
-            for fe in mroot:
-                if fe.get("full-path") == full_path:
-                    exists = True
-                    break
-            if not exists:
-                fe = etree.SubElement(mroot, "file-entry" if not mns else f"{{{mns}}}file-entry")
-                fe.set("media-type", media_type)
-                fe.set("full-path", full_path)
-        etree.indent(mroot, space="  ")
-        mtree.write(str(manifest_xml), pretty_print=True, xml_declaration=True, encoding="UTF-8")
+    # Note: META-INF/manifest.xml is left empty per HWPX convention.
+    # Images are registered only in content.hpf manifest.
 
 
 def build(
