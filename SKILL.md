@@ -549,7 +549,42 @@ python3 "$SKILL_DIR/scripts/merge_hwpx.py" file1.hwpx file2.hwpx -o merged.hwpx 
 
 ---
 
-## 워크플로우 6: 레퍼런스 기반 문서 생성 (첨부 HWPX가 있을 때 기본 적용)
+## 워크플로우 6: 도장 (stamp)
+
+이름을 입력하면 빨간 원형 도장(투명 배경 PNG)을 생성하고, HWPX 문서의 "(인)" 위에 겹쳐서 삽입한다.
+문서에 "(인)"이 없으면 자동으로 추가한 뒤 도장을 겹친다.
+
+### 처리 항목
+- **도장 이미지 자동 생성**: 투명 배경 빨간 원형 인감 (이름 2~5자 지원)
+- **(인) 자동 추가**: 문서에 "(인)"이 없으면 서명자 위치에 자동 삽입
+- **겹침 배치**: `textWrap="IN_FRONT_OF_TEXT"`로 "(인)" 텍스트 위에 정확히 겹침
+- **BinData 자동 등록**: content.hpf에 isEmbeded="1"로 등록
+
+### 사용법
+
+```bash
+source "$VENV"
+# HWPX 문서에 도장 찍기 ((인)이 이미 있는 경우)
+python3 "$SKILL_DIR/scripts/stamp_hwpx.py" --name 홍길동 --input doc.hwpx --output stamped.hwpx
+
+# (인)이 없는 문서 — 서명자 위치를 지정하여 자동 추가
+python3 "$SKILL_DIR/scripts/stamp_hwpx.py" --name 홍길동 --input doc.hwpx --output stamped.hwpx --signer 학교장
+
+# 도장 이미지만 생성
+python3 "$SKILL_DIR/scripts/stamp_hwpx.py" --name 홍길동 --image-only --output stamp.png
+
+# 도장 크기 조절 (HWPUNIT, 기본값 3300 ≈ 11.6mm)
+python3 "$SKILL_DIR/scripts/stamp_hwpx.py" --name 홍길동 --input doc.hwpx --output out.hwpx --stamp-size 4000
+```
+
+### 도장 레이아웃
+- 2글자: 세로 배치
+- 3~4글자: 2x2 격자 (우→좌, 상→하 읽기순)
+- 5글자 이상: 가로 배치
+
+---
+
+## 워크플로우 7: 레퍼런스 기반 문서 생성 (첨부 HWPX가 있을 때 기본 적용)
 
 사용자가 제공한 HWPX 파일을 분석하여 동일한 레이아웃의 문서를 생성하는 워크플로우.
 이 스킬에서는 첨부 레퍼런스가 존재하면 본 워크플로우를 기본으로 사용한다.
