@@ -154,6 +154,63 @@ def validate_hwpx(hwpx_path: Path) -> list[str]:
     return errors
 
 
+def _register_bindata(work: Path, bindata_dir: Path) -> None:
+    """Register BinData images in content.hpf and META-INF/manifest.xml."""
+    mime_map = {
+        ".jpg": "image/jpeg", ".jpeg": "image/jpeg",
+        ".png": "image/png", ".gif": "image/gif", ".bmp": "image/bmp",
+    }
+    images = [
+        f for f in sorted(bindata_dir.iterdir())
+        if f.is_file() and f.suffix.lower() in mime_map
+    ]
+    if not images:
+        return
+
+    # Update content.hpf — add <opf:item> entries in <opf:manifest>
+    hpf_path = work / "Contents" / "content.hpf"
+    tree = etree.parse(str(hpf_path))
+    root = tree.getroot()
+    ns = {"opf": "http://www.idpf.org/2007/opf/"}
+    manifest = root.find(".//opf:manifest", ns)
+    if manifest is not None:
+        for img in images:
+            item_id = img.stem
+            href = f"BinData/{img.name}"
+            media_type = mime_map[img.suffix.lower()]
+            # Check if already registered
+            existing = manifest.find(f"opf:item[@id='{item_id}']", ns)
+            if existing is None:
+                el = etree.SubElement(manifest, f"{{{ns['opf']}}}item")
+                el.set("id", item_id)
+                el.set("href", href)
+                el.set("media-type", media_type)
+    etree.indent(root, space="  ")
+    tree.write(str(hpf_path), pretty_print=True, xml_declaration=True, encoding="UTF-8")
+
+    # Update META-INF/manifest.xml — add <file-entry> entries
+    manifest_xml = work / "META-INF" / "manifest.xml"
+    if manifest_xml.is_file():
+        mtree = etree.parse(str(manifest_xml))
+        mroot = mtree.getroot()
+        mns = mroot.nsmap.get(None, "")
+        for img in images:
+            media_type = mime_map[img.suffix.lower()]
+            full_path = f"BinData/{img.name}"
+            # Check if already exists
+            exists = False
+            for fe in mroot:
+                if fe.get("full-path") == full_path:
+                    exists = True
+                    break
+            if not exists:
+                fe = etree.SubElement(mroot, "file-entry" if not mns else f"{{{mns}}}file-entry")
+                fe.set("media-type", media_type)
+                fe.set("full-path", full_path)
+        etree.indent(mroot, space="  ")
+        mtree.write(str(manifest_xml), pretty_print=True, xml_declaration=True, encoding="UTF-8")
+
+
 def build(
     template: str | None,
     header_override: Path | None,
@@ -185,6 +242,12 @@ def build(
                 if overlay_file.is_file() and overlay_file.suffix == ".xml":
                     dest = work / "Contents" / overlay_file.name
                     shutil.copy2(overlay_file, dest)
+                elif overlay_file.is_file() and overlay_file.suffix.lower() in (
+                    ".jpg", ".jpeg", ".png", ".gif", ".bmp",
+                ):
+                    bindata_dir = work / "BinData"
+                    bindata_dir.mkdir(exist_ok=True)
+                    shutil.copy2(overlay_file, bindata_dir / overlay_file.name)
 
         # 3. Apply custom overrides
         if header_override:
@@ -196,6 +259,11 @@ def build(
             if not section_override.is_file():
                 raise SystemExit(f"Section file not found: {section_override}")
             shutil.copy2(section_override, work / "Contents" / "section0.xml")
+
+        # 3b. Register BinData images in content.hpf and manifest.xml
+        bindata_dir = work / "BinData"
+        if bindata_dir.is_dir():
+            _register_bindata(work, bindata_dir)
 
         # 4. Update metadata
         update_metadata(work / "Contents" / "content.hpf", title, creator)

@@ -9,7 +9,7 @@
         <hp:visibility hideFirstHeader="0" hideFirstFooter="0" hideFirstMasterPage="0" border="SHOW_ALL" fill="SHOW_ALL" hideFirstPageNum="0" hideFirstEmptyLine="0" showLineNumber="0"/>
         <hp:lineNumberShape restartType="0" countBy="0" distance="0" startNumber="0"/>
         <hp:pagePr landscape="WIDELY" width="59528" height="84188" gutterType="LEFT_ONLY">
-          <hp:margin header="0" footer="3685" gutter="0" left="5669" right="5669" top="5102" bottom="0"/>
+          <hp:margin header="0" footer="2834" gutter="0" left="4818" right="4818" top="2834" bottom="0"/>
         </hp:pagePr>
         <hp:footNotePr>
           <hp:autoNumFormat type="DIGIT" userChar="" prefixChar="" suffixChar=")" supscript="0"/>
@@ -41,30 +41,57 @@
     </hp:run>
     <hp:run charPrIDRef="0">
       <!-- ═══════════════════════════════════════════════
-           학교 헤더 테이블 (2행 x 3열)
-           Row0: [학교명(rowSpan=2)] [모토] [연락처(rowSpan=2)]
-           Row1:                     [가정통신문]
-           본문폭=48190 (59528-5669*2)
+           학교 헤더 테이블 (2행 x 3열) — 원본 "헤더 표시.hwpx" 기반 고정
+           Row0: [교표이미지(rowSpan=2)] [모토] [연락처(rowSpan=2)]
+           Row1:                         [가 정 통 신 문]
+           본문폭=49892 (59528-4818*2)
            ═══════════════════════════════════════════════ -->
       <hp:tbl id="1000000099" zOrder="0" numberingType="TABLE" textWrap="TOP_AND_BOTTOM" textFlow="BOTH_SIDES" lock="0" dropcapstyle="None" pageBreak="CELL" repeatHeader="1" rowCnt="2" colCnt="3" cellSpacing="0" borderFillIDRef="3" noAdjust="0">
-        <hp:sz width="47623" widthRelTo="ABSOLUTE" height="7260" heightRelTo="ABSOLUTE" protect="0"/>
-        <hp:pos treatAsChar="1" affectLSpacing="0" flowWithText="1" allowOverlap="0" holdAnchorAndSO="0" vertRelTo="PARA" horzRelTo="COLUMN" vertAlign="TOP" horzAlign="LEFT" vertOffset="0" horzOffset="0"/>
+        <hp:sz width="49038" widthRelTo="ABSOLUTE" height="7911" heightRelTo="ABSOLUTE" protect="0"/>
+        <hp:pos treatAsChar="1" affectLSpacing="0" flowWithText="1" allowOverlap="0" holdAnchorAndSO="0" vertRelTo="PARA" horzRelTo="PARA" vertAlign="TOP" horzAlign="LEFT" vertOffset="0" horzOffset="0"/>
         <hp:outMargin left="141" right="141" top="141" bottom="141"/>
         <hp:inMargin left="141" right="141" top="141" bottom="141"/>
         <!-- Row 0 -->
         <hp:tr>
-          <!-- Cell(0,0): 학교명 (rowSpan=2) -->
-          <hp:tc name="" header="0" hasMargin="0" protect="0" editable="0" dirty="0" borderFillIDRef="3">
+          <!-- Cell(0,0): 교표 이미지 (rowSpan=2) -->
+          <hp:tc name="" header="0" hasMargin="0" protect="0" editable="0" dirty="0" borderFillIDRef="12">
             <hp:subList id="" textDirection="HORIZONTAL" lineWrap="BREAK" vertAlign="CENTER" linkListIDRef="0" linkListNextIDRef="0" textWidth="0" textHeight="0" hasTextRef="0" hasNumRef="0">
               <hp:p id="1000000101" paraPrIDRef="20" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0">
-                <hp:run charPrIDRef="2">
-                  <hp:t>{{학교명}}</hp:t>
+                <hp:run charPrIDRef="0">
+                  <hp:pic id="1000000199" zOrder="5" numberingType="PICTURE" textWrap="SQUARE" textFlow="BOTH_SIDES" lock="0" dropcapstyle="None" href="" groupLevel="0" instid="728750958" reverse="0">
+                    <hp:offset x="0" y="4294966957"/>
+                    <hp:orgSz width="4671" height="4668"/>
+                    <hp:curSz width="7262" height="7257"/>
+                    <hp:flip horizontal="0" vertical="0"/>
+                    <hp:rotationInfo angle="0" centerX="3631" centerY="3628" rotateimage="1"/>
+                    <hp:renderingInfo>
+                      <hc:transMatrix e1="1" e2="0" e3="0" e4="0" e5="1" e6="-339"/>
+                      <hc:scaMatrix e1="1.554699" e2="0" e3="0" e4="0" e5="1.554627" e6="339"/>
+                      <hc:rotMatrix e1="1" e2="0" e3="0" e4="0" e5="1" e6="0"/>
+                    </hp:renderingInfo>
+                    <hc:img binaryItemIDRef="image1" bright="0" contrast="0" effect="REAL_PIC" alpha="0"/>
+                    <hp:imgRect>
+                      <hc:pt0 x="0" y="0"/>
+                      <hc:pt1 x="4671" y="0"/>
+                      <hc:pt2 x="4671" y="4668"/>
+                      <hc:pt3 x="0" y="4668"/>
+                    </hp:imgRect>
+                    <hp:imgClip left="0" right="41640" top="0" bottom="41640"/>
+                    <hp:inMargin left="0" right="0" top="0" bottom="0"/>
+                    <hp:imgDim dimwidth="41640" dimheight="41640"/>
+                    <hp:effects/>
+                    <hp:sz width="7262" widthRelTo="ABSOLUTE" height="7257" heightRelTo="ABSOLUTE" protect="0"/>
+                    <hp:pos treatAsChar="1" affectLSpacing="0" flowWithText="1" allowOverlap="1" holdAnchorAndSO="0" vertRelTo="PAPER" horzRelTo="PAPER" vertAlign="TOP" horzAlign="LEFT" vertOffset="7645" horzOffset="6779"/>
+                    <hp:outMargin left="0" right="0" top="0" bottom="0"/>
+                    <hp:shapeComment>인천이음초등학교 교표</hp:shapeComment>
+                  </hp:pic>
+                  <hp:t/>
                 </hp:run>
               </hp:p>
             </hp:subList>
             <hp:cellAddr colAddr="0" rowAddr="0"/>
             <hp:cellSpan colSpan="1" rowSpan="2"/>
-            <hp:cellSz width="12762" height="7260"/>
+            <hp:cellSz width="10781" height="7911"/>
             <hp:cellMargin left="141" right="141" top="141" bottom="141"/>
           </hp:tc>
           <!-- Cell(1,0): 학교 모토 -->
@@ -72,49 +99,54 @@
             <hp:subList id="" textDirection="HORIZONTAL" lineWrap="BREAK" vertAlign="CENTER" linkListIDRef="0" linkListNextIDRef="0" textWidth="0" textHeight="0" hasTextRef="0" hasNumRef="0">
               <hp:p id="1000000102" paraPrIDRef="20" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0">
                 <hp:run charPrIDRef="2">
-                  <hp:t>{{학교모토}}</hp:t>
+                  <hp:t>함께 걷고 나누는 꿈키움 행복 이음학교</hp:t>
                 </hp:run>
               </hp:p>
             </hp:subList>
             <hp:cellAddr colAddr="1" rowAddr="0"/>
             <hp:cellSpan colSpan="1" rowSpan="1"/>
-            <hp:cellSz width="21817" height="2482"/>
+            <hp:cellSz width="25779" height="2199"/>
             <hp:cellMargin left="141" right="141" top="141" bottom="141"/>
           </hp:tc>
           <!-- Cell(2,0): 연락처 (rowSpan=2) -->
           <hp:tc name="" header="0" hasMargin="0" protect="0" editable="0" dirty="0" borderFillIDRef="7">
             <hp:subList id="" textDirection="HORIZONTAL" lineWrap="BREAK" vertAlign="CENTER" linkListIDRef="0" linkListNextIDRef="0" textWidth="0" textHeight="0" hasTextRef="0" hasNumRef="0">
               <hp:p id="1000000103" paraPrIDRef="21" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0">
-                <hp:run charPrIDRef="4">
-                  <hp:t>{{홈페이지}}</hp:t>
+                <hp:run charPrIDRef="6">
+                  <hp:t>배움·이해·실천·공감</hp:t>
                 </hp:run>
               </hp:p>
               <hp:p id="1000000104" paraPrIDRef="21" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0">
                 <hp:run charPrIDRef="4">
-                  <hp:t>☎ {{전화번호}}</hp:t>
+                  <hp:t>http://ieum.icees.kr</hp:t>
+                </hp:run>
+              </hp:p>
+              <hp:p id="1000000140" paraPrIDRef="21" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0">
+                <hp:run charPrIDRef="4">
+                  <hp:t>☎ 032) 870-8400</hp:t>
                 </hp:run>
               </hp:p>
             </hp:subList>
             <hp:cellAddr colAddr="2" rowAddr="0"/>
             <hp:cellSpan colSpan="1" rowSpan="2"/>
-            <hp:cellSz width="13044" height="7260"/>
+            <hp:cellSz width="12478" height="7911"/>
             <hp:cellMargin left="141" right="141" top="141" bottom="141"/>
           </hp:tc>
         </hp:tr>
         <!-- Row 1 -->
         <hp:tr>
-          <!-- Cell(1,1): "가정통신문" -->
+          <!-- Cell(1,1): "가 정 통 신 문" -->
           <hp:tc name="" header="0" hasMargin="0" protect="0" editable="0" dirty="0" borderFillIDRef="6">
             <hp:subList id="" textDirection="HORIZONTAL" lineWrap="BREAK" vertAlign="CENTER" linkListIDRef="0" linkListNextIDRef="0" textWidth="0" textHeight="0" hasTextRef="0" hasNumRef="0">
               <hp:p id="1000000105" paraPrIDRef="20" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0">
                 <hp:run charPrIDRef="7">
-                  <hp:t>가정통신문</hp:t>
+                  <hp:t>가 정 통 신 문</hp:t>
                 </hp:run>
               </hp:p>
             </hp:subList>
             <hp:cellAddr colAddr="1" rowAddr="1"/>
             <hp:cellSpan colSpan="1" rowSpan="1"/>
-            <hp:cellSz width="21817" height="4778"/>
+            <hp:cellSz width="25779" height="5712"/>
             <hp:cellMargin left="141" right="141" top="141" bottom="141"/>
           </hp:tc>
         </hp:tr>

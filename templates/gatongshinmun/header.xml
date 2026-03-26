@@ -61,7 +61,7 @@
       </hh:fontface>
     </hh:fontfaces>
     <!-- borderFill: 1=없음(페이지), 2=없음+투명(참조), 3=SOLID 0.12mm 4면(표기본), 4=SOLID+#D6DCE4배경(표헤더), 5=상단굵은+하단얇은, 6=하단굵은+상단얇은, 7=좌얇은+나머지굵은, 8=SOLID 0.12mm(본문표), 9=DOUBLE_SLIM 상+좌+우(제목상단), 10=DOUBLE_SLIM 하+좌+우(제목하단), 11=상하얇은선(제목셀) -->
-    <hh:borderFills itemCnt="11">
+    <hh:borderFills itemCnt="12">
       <!-- id=1: 없음 (페이지 보더) -->
       <hh:borderFill id="1" threeD="0" shadow="0" centerLine="NONE" breakCellSeparateLine="0">
         <hh:slash type="NONE" Crooked="0" isCounter="0"/>
@@ -173,6 +173,16 @@
         <hh:rightBorder type="NONE" width="0.1 mm" color="#000000"/>
         <hh:topBorder type="SOLID" width="0.12 mm" color="#000000"/>
         <hh:bottomBorder type="SOLID" width="0.12 mm" color="#000000"/>
+        <hh:diagonal type="SOLID" width="0.1 mm" color="#000000"/>
+      </hh:borderFill>
+      <!-- id=12: 좌 굵은(0.6mm) + 나머지 굵은(0.6mm) — 교표 셀 -->
+      <hh:borderFill id="12" threeD="0" shadow="0" centerLine="NONE" breakCellSeparateLine="0">
+        <hh:slash type="NONE" Crooked="0" isCounter="0"/>
+        <hh:backSlash type="NONE" Crooked="0" isCounter="0"/>
+        <hh:leftBorder type="SOLID" width="0.6 mm" color="#000000"/>
+        <hh:rightBorder type="SOLID" width="0.12 mm" color="#000000"/>
+        <hh:topBorder type="SOLID" width="0.6 mm" color="#000000"/>
+        <hh:bottomBorder type="SOLID" width="0.6 mm" color="#000000"/>
         <hh:diagonal type="SOLID" width="0.1 mm" color="#000000"/>
       </hh:borderFill>
     </hh:borderFills>
