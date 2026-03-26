@@ -128,6 +128,7 @@ python3 scripts/page_guard.py --reference reference.hwpx --output result.hwpx
 | report | 보고서 | 섹션 헤더, 들여쓰기, 체크박스 |
 | minutes | 회의록 | 섹션 라벨, 테두리 구분 |
 | proposal | 제안서 | 색상 헤더, 번호 뱃지 |
+| gatongshinmun | 가정통신문 | 학교 헤더(교명/모토/연락처), DOUBLE_SLIM 컨테이너, 제목박스, 날짜+학교장명 |
 
 ## 요구사항
 

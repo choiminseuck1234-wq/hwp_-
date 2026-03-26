@@ -113,7 +113,7 @@ source "$VENV"
 
 ### 흐름
 
-1. **템플릿 선택** (base/gonmun/report/minutes/proposal)
+1. **템플릿 선택** (base/gonmun/report/minutes/proposal/gatongshinmun)
 2. **section0.xml 작성** (본문 내용)
 3. **(선택) header.xml 수정** (새 스타일 추가 필요 시)
 4. **build_hwpx.py로 빌드**
@@ -412,6 +412,50 @@ section0.xml의 첫 문단(`<hp:p>`)의 첫 런(`<hp:run>`)에 반드시 `<hp:se
 <!-- borderFillIDRef="7" + charPrIDRef="11" → 파란배경 흰색 아라비아숫자 -->
 <!-- borderFillIDRef="8" + charPrIDRef="8"  → 하단선만 검정 볼드 제목 -->
 ```
+
+### gatongshinmun (가정통신문) — base + 추가
+
+학교에서 학부모에게 보내는 가정통신문용. 학교 헤더 테이블(교명/모토/연락처) + DOUBLE_SLIM 이중선 컨테이너(제목/본문) 구조.
+
+| ID | 유형 | 설명 |
+|----|------|------|
+| charPr 7 | 글자 | 26pt 볼드 함초롬돋움 spacing=50 ("가정통신문" 타이틀) |
+| charPr 8 | 글자 | 17pt 볼드 함초롬바탕 (제목 텍스트) |
+| charPr 9 | 글자 | 16pt 볼드 함초롬바탕 (날짜) |
+| charPr 10 | 글자 | 20pt 볼드 함초롬바탕 spacing=50 (학교장명) |
+| charPr 11 | 글자 | 12pt 볼드 함초롬돋움 (번호항목 제목) |
+| charPr 12 | 글자 | 12pt 함초롬돋움 (상세내용) |
+| charPr 13 | 글자 | 11pt 볼드 함초롬돋움 (강조텍스트) |
+| paraPr 20 | 문단 | CENTER, 160% (헤더표/타이틀) |
+| paraPr 21 | 문단 | CENTER, 130% (표 셀) |
+| paraPr 22 | 문단 | JUSTIFY, 160% (본문 기본) |
+| paraPr 23 | 문단 | JUSTIFY, 150% (본문 상세) |
+| paraPr 24 | 문단 | JUSTIFY, 160%, prev=200 (단락 간격) |
+| paraPr 25 | 문단 | CENTER, 200% (날짜) |
+| paraPr 26 | 문단 | CENTER, 150%, next=568 (학교장명) |
+| borderFill 3 | 테두리 | SOLID 0.12mm 4면 (표 기본) |
+| borderFill 5 | 테두리 | 상단 0.6mm 굵은선 + 나머지 얇은 (모토 셀) |
+| borderFill 6 | 테두리 | 하단 0.6mm 굵은선 + 나머지 얇은 (가정통신문 셀) |
+| borderFill 7 | 테두리 | 좌 얇은 + 나머지 0.6mm 굵은 (연락처 셀) |
+| borderFill 9 | 테두리 | DOUBLE_SLIM 0.5mm 상+좌+우 (컨테이너 상단) |
+| borderFill 10 | 테두리 | DOUBLE_SLIM 0.5mm 하+좌+우 (컨테이너 하단) |
+| borderFill 11 | 테두리 | 상하 얇은선 (제목 텍스트 셀) |
+
+#### gatongshinmun 레이아웃 구조
+
+**페이지 설정**: A4, 좌우여백 5669, 상단 5102, 하단 0, footer 3685
+
+**학교 헤더 테이블** (2행 x 3열):
+- Cell(0,0): 학교명 (rowSpan=2, charPr 2)
+- Cell(1,0): 학교 모토 (charPr 2, borderFill 5)
+- Cell(2,0): 홈페이지 + 전화번호 (rowSpan=2, charPr 4, borderFill 7)
+- Cell(1,1): "가정통신문" (charPr 7, borderFill 6)
+
+**컨테이너 테이블** (2행 x 1열, DOUBLE_SLIM 이중선):
+- Row 0: 제목 영역 (borderFill 9) → 내부 1x1 표(borderFill 11)에 charPr 8 제목
+- Row 1: 본문 영역 (borderFill 10) → 인사말, 번호항목, 상세내용, 날짜, 학교장명
+
+**플레이스홀더**: `{{학교명}}`, `{{학교모토}}`, `{{홈페이지}}`, `{{전화번호}}`, `{{제목}}`, `{{인사말}}`, `{{본문}}`, `{{항목N_제목}}`, `{{항목N_내용}}`, `{{날짜}}`, `{{학교장명}}`
 
 ---
 

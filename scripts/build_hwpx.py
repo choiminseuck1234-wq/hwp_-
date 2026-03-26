@@ -42,7 +42,7 @@ SKILL_DIR = SCRIPT_DIR.parent
 TEMPLATES_DIR = SKILL_DIR / "templates"
 BASE_DIR = TEMPLATES_DIR / "base"
 
-AVAILABLE_TEMPLATES = ["gonmun", "report", "minutes"]
+AVAILABLE_TEMPLATES = ["gonmun", "report", "minutes", "gatongshinmun"]
 
 
 def validate_xml(filepath: Path) -> None:
